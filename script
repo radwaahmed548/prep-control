@@ -1,0 +1,15 @@
+def GET_table_name():
+    list_of_all_dataframes=[]
+    query=f'SELECT name FROM sys.tables'
+    df_all_tables=pd.read_sql(query,newcon)
+    for table_name in df_all_tables.items():
+         def Get_started_date(table_name):
+          query1 = f"select Last_Ext_Date , Extraction_Column from [dbo].[Source_Table_Delta_Dates_Config] where Source_Table_Name='[{database}].[dbo].{table_name}'"
+          df_config_table=pd.read_sql(query1,newcon2)
+          last_ext_date = df_config_table['Last_Ext_Date'][0] 
+          extraction_column=df_config_table['Extraction_Column'][0]
+          query2 = f"SELECT * FROM [{database}].[dbo].{table_name} WHERE {extraction_column}  between '{last_ext_date}' and '2022-10-05 18:20:39.4630000';"
+          df_delta = pd.read_sql(query2, newcon)
+          return  df_delta.to_sql("delta_table",engine,index=False,if_exists='replace')
+    return print('done')
+    #return df_panadas.to_sql("All_names",engine,index=False,if_exists='replace')
